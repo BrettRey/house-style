@@ -221,11 +221,26 @@ def main() -> int:
         (dirty if conflicts(g) else clean).append(g)
 
     if args.apply:
+        # Roughdraft reflows Markdown on save: the key moves off the checkbox
+        # line onto an indented continuation line, leaving a bare "- [x]".
+        # Accept both shapes, or an approved review silently applies nothing.
+        lines = Path(args.apply).read_text(encoding="utf-8").splitlines()
         approved = set()
-        for line in Path(args.apply).read_text(encoding="utf-8").splitlines():
-            m = re.match(r"^\s*-\s*\[[xX]\]\s*(\S+)", line)
-            if m:
-                approved.add(m.group(1))
+        for i, line in enumerate(lines):
+            m = re.match(r"^\s*-\s*\[[xX]\]\s*(.*)$", line)
+            if not m:
+                continue
+            rest = m.group(1).strip()
+            if not rest:
+                for nxt in lines[i + 1:]:
+                    if nxt.strip():
+                        rest = nxt.strip()
+                        break
+                    if len(rest) or nxt.startswith("- ") or nxt.startswith("#"):
+                        break
+            token = rest.split()[0].strip("`*_") if rest.split() else ""
+            if token:
+                approved.add(token)
         if not approved:
             sys.exit("[dedupe] no lines checked off in the report; nothing to apply")
         if not args.allow_dirty:
