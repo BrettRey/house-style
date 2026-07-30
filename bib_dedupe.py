@@ -248,11 +248,21 @@ def main() -> int:
             if not ok:
                 sys.exit(f"[dedupe] central bib has uncommitted changes ({detail}); "
                          "commit or stash first")
+        # Both lists. The conflict guard keeps a cluster from being *proposed*
+        # automatically; it must not veto a decision a human made deliberately,
+        # or an approved review silently merges nothing and reports success.
         new_text, merged = text, 0
-        for g in clean:
-            key_src, data_src = choose_winner(g, cites)
-            if key_src.key not in approved:
+        for g in clean + dirty:
+            named = {e.key for e in g} & approved
+            if not named:
                 continue
+            # Honour the key the reviewer named, rather than recomputing it.
+            key_src = next(e for e in g if e.key in named)
+            _, data_src = choose_winner(g, cites)
+            bad = conflicts(g)
+            if bad:
+                print(f"  {key_src.key}: merging over conflicting {', '.join(bad)} "
+                      "(approved)")
             aliases = {e.key for e in g if e.key != key_src.key}
             for e in g:
                 aliases |= e.aliases
