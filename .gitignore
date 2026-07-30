@@ -1,0 +1,11 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Old copies (superseded by git history)
+style-guide copy.md
+style-rules copy.yaml
+
+# Dated bib backups (git history is the backup)
+references.bib.backup.*
+references.bib.blg

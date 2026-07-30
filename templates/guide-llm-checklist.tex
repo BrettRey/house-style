@@ -1,0 +1,373 @@
+\documentclass[12pt]{article}
+\usepackage{comment}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{outlines}
+\usepackage[
+    a4paper,
+    left=1cm,
+    right=1cm,
+    top=2cm,
+    bottom=1cm
+]{geometry}
+
+\usepackage{enumitem}
+
+\usepackage[table]{xcolor}
+\usepackage{array}
+\usepackage{pifont}
+\usepackage{tabularx}
+\usepackage{longtable} % You can use longtable to make tables that span multiple pages
+
+\usepackage[section]{placeins}
+
+\usepackage[colorlinks=true, urlcolor=blue]{hyperref}
+
+\newcommand{\checked}{\ding{110}}   % ⬛ with check
+\newcommand{\unchecked}{\ding{111}} % ⬜ empty
+
+
+% Custom header and footer setup
+\pagestyle{fancy}
+\fancyhf{} % clear all fields
+\fancyhead[L]{\url{http://www.llm-checklist.com}} % Left header
+\fancyhead[R]{Version: 1.0} % Right header
+
+% Remove the line under the header
+\renewcommand{\headrulewidth}{0pt}
+
+% Title formatting - squishing the title to the top
+\renewcommand{\maketitle}{
+        \vspace{-2cm} \noindent
+        \textbf{\Large{GUIDE-LLM: A checklist for reporting studies with large language models in behavioral and social science}} \\
+        %\vspace{0.5cm}
+}
+
+\begin{document}
+
+\maketitle
+
+\noindent The GUIDE-LLM checklist provides a standardized framework for reporting studies that use large language models (LLMs) in the behavioral and social sciences. It aims to promote transparency, reproducibility, and ethical accountability across all stages of LLM-based research.
+
+
+\subsection*{How to complete the checklist:}
+
+\noindent Fill in each item with brief, specific information about how LLMs were used in your study. Where an item does not apply, write “N/A” and, if helpful, note why. If multiple LLMs were used for different purposes, complete the relevant sections separately for each model. You may refer to sections or appendices in your manuscript rather than repeating text.
+
+
+\begin{longtable}{|p{0.7\textwidth}|p{0.3\textwidth}|}
+\hline
+\rowcolor{green!20}
+\textbf{Scope of LLM use} & \textbf{Answer} \\*   % no break after this row
+\hline
+
+\textbf{Item A.1:} LLMs were used in this project for:
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Briefly describe how and for what purposes LLMs were used in the study. This may include one or several stages of the research workflow, depending on the project’s design and aims. The following examples illustrate common categories:
+\begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+    \item \textbf{Research design} (e.g., hypothesis generation, literature search, or creating surveys/stimuli).
+    \item \textbf{Data processing} (e.g., transcription, translation, or data extraction).
+    \item Analysis (e.g., data labeling, summarization, pattern detection, or code writing).
+    \item \textbf{LLM as research object} (e.g., studying LLM behavior, benchmarking LLMs, or bias assessment of LLMs).
+    \item \textbf{Participant-facing settings} (e.g., LLM used as an intervention, studying human interactions with LLM chatbots).
+    \item \textbf{Communication} (e.g., paper writing, editing, or reviewing).
+\end{itemize}
+Depending on the specific use case described here, different checklist items may later be relevant, and, in many cases, it may be necessary that later items in the checklist are reported separately for each use case.}}
+&   \\
+\hline
+\textbf{Item A.2:} Degree of automation (human-in-the-loop vs. fully automated):
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Indicate how much human oversight was involved. For example, was each LLM output reviewed or edited by a person, or was it used automatically? For participant-facing tasks, state whether humans checked outputs before showing them to participants or whether participants interacted with the LLM directly. Specify who provided oversight (e.g., student assistant, expert, PI).}}  &   \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.7\textwidth}|p{0.3\textwidth}|}
+\hline
+\rowcolor{green!20}
+\textbf{Model/system details
+} & \textbf{Answer} \\*   % no break after this row
+\hline
+
+\textbf{Item B.1:} Model name, including provider, model size, exact version/ID, date of access, and source link (if possible):
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Report the exact model names (including provider, version, and date accessed). Avoid generic labels like “ChatGPT” or “GPT-4”; instead, use detailed model names such as “GPT-4o-mini-2024-12-17 (OpenAI)” or “Llama-3.1-8B (Meta; accessed via HuggingFace in May 2025)”. For locally deployable models, please also enter a source link (e.g., the URL to the HuggingFace page). If you tested multiple models, it is encouraged to name them and briefly explain which one you used in the final study and why.}}
+&   \\
+\hline
+\textbf{Item B.2:} Model access (e.g., API, web interface, local) and context mode (e.g., chat mode or separate calls):
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Note how you accessed the models (e.g., API, web interface, local installation) and whether you used LLMs in chat mode (ongoing conversation) or stateless mode (separate prompts). Mention the exact API name and version, since different access modes may influence responses (e.g., due to differences in model routing). }}  &   \\
+\hline
+\textbf{Item B.3:} Relevant LLM configurations reported (as applicable), such as temperature, max tokens, seed, and number of runs:
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:}  List any configuration settings that affect outputs, such as:
+\begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+    \item \textbf{temperature} (which controls model randomness)
+    \item \textbf{top\_k, top\_p, max tokens} (which controls sampling so that, e.g., only the k most probable tokens are considered, or to enforce a length limit)
+    \item Certain \textbf{penalties} that discourage repetition (e.g., a frequency penalty to reduce the likelihood of tokens proportional to how often they have already appeared; a presence penalty reduces the likelihood of any token that has appeared at least once)
+    \item \textbf{Stop sequences} (which halt generation when such a top sequence is produced, such as, e.g., [``$\backslash n \backslash n$'', ``END'']).
+    \item \textbf{Number of completions or runs} (which is often used to capture variance in outputs across repeated generations)
+    \item \textbf{Quantization level} (e.g., FP16, INT8, INT4) to change numerical precision beyond the default
+    \item \textbf{Reasoning}-related settings, such as whether a specific structured reasoning is enabled, the specified reasoning effort level (e.g., low/medium/high or numerical settings that influence the depth of the reasoning), and any compute or inference budget constraints tied to the chosen reasoning mode
+\end{itemize}
+} } &   \\
+\hline
+\textbf{Item B.4:} Customization:
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Check and describe any modifications or extended capabilities your setup used. Examples: fine-tuning (e.g., via LoRA; Low-Rank Adaptation) is used to adapt a pretrained model to domain materials; retrieval-augmentation generation (RAG) is a technique in which the model retrieves relevant information from external sources (e.g., databases). Here, web search refers to whether the LLM could retrieve other information from the web; automated prompt optimization refers to certain wrappers (e.g., DSPy) that treat prompts as a trainable parameter; agentic workflows refer to multi-step reasoning or delegated actions that go beyond simple tool/function calling. (e.g., via LangChain, AutoGPT, CrewAI). For post-training, describe any custom refinement processes applied to the LLMs, including alignment methods or model-level optimization techniques used to adjust behavior after pretraining (e.g., reinforcement learning from human feedback (RLHF), direct preference optimization (DPO)). Here, the goal is to specify only the customizations or modifications added on top of the existing model so others can reproduce your exact setup, rather than describing default model-provider settings. Here, the goal is to specify any added customizations and any provider-specific characteristics that meaningfully shape system behavior in order to enable others to understand and accurately reproduce your setup. }}  &   \begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+   \item[\unchecked] Base model
+   \item[\unchecked] Fine-tuning
+   \item[\unchecked] RAG (retrieval-augmented)
+   \item[\unchecked] Automated prompt optimization
+   \item[\unchecked] Tool/function calling
+   \item[\unchecked] Web search
+   \item[\unchecked] Agentic workflows
+   \item[\unchecked] Other adaptations (e.g., safety mechanisms)
+\end{itemize}
+
+Description: \\
+\hline
+\textbf{Item B.5:} Did the LLM session(s) include persistent memory across interactions?
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Indicate whether the LLM could “remember” previous conversations (i.e., had persistent memory). Unless such memory is disabled, there may also be spillover effects from other chat windows or prior conversations, which can influence outputs even when not intended. }}  &   \begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+    \item[\unchecked] Yes
+    \item[\unchecked] No
+    \item[\unchecked] N/A
+\end{itemize} \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.7\textwidth}|p{0.3\textwidth}|}
+\hline
+\rowcolor{green!20}
+\textbf{{Prompts}} & \textbf{Answer} \\*   % no break after this row
+\hline
+
+\textbf{Item C.1:} Exact prompt(s) reported:
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Whenever possible, include the exact text of prompts you used, including in-context examples or demonstrations provided to the LLM. Even small wording changes, formatting, or ordering of examples can substantially affect outputs. If full prompts cannot be shared (e.g., due to privacy or length), include a redacted or representative example or link to the full prompt in a repository (e.g., OSF, GitHub). }}
+&   \\
+\hline
+\textbf{Item C.2:} System-wide instructions (if any):
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Note any system-level instructions that guide the model’s general behavior (e.g., “You are a helpful assistant.”). These are commonly not directly visible but can be accessed through the API.
+}}  &   \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.7\textwidth}|p{0.3\textwidth}|}
+\hline
+\rowcolor{green!20}
+\textbf{{Data inputs \& privacy}} & \textbf{Answer} \\*   % no break after this row
+\hline
+
+\textbf{Item D.1:} Handling of personal or sensitive data (if any) (e.g., consent for data processing):
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} If any personal, sensitive, or identifiable data were processed, describe how they were handled in compliance with ethical standards and data protection laws. Researchers should indicate whether participants explicitly consented to their data being analyzed with an LLM, particularly when proprietary, cloud-based models are used. Such processing typically involves transferring data to a private company that may retain them indefinitely, which raises additional ethical and legal considerations. Beyond consent, describe how sensitive or identifiable data were handled (e.g., de-identification, anonymization, masking) and whether the LLM provider offers safeguards such as excluding inputs from training or storage. Clarify where data were stored or processed and how applicable legal/ethical requirements were met. If relevant, address cross-border transfers, as data may be stored in jurisdictions with different privacy laws (e.g., EU vs. US), with implications for compliance with GDPR, HIPAA, or other frameworks.
+For context, some providers (e.g., OpenAI) may log or inspect prompts even when the data are not used for model training. For sensitive datasets, zero-retention configurations may be required (e.g., the MIMIC datasets can only be used with OpenAI models if a zero-retention checkpoint is enabled).
+}}
+&   \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.7\textwidth}|p{0.3\textwidth}|}
+\hline
+\rowcolor{green!20}
+\textbf{{Validation \& interpretation}} & \textbf{Answer} \\*   % no break after this row
+\hline
+
+\textbf{Item E.1:} Human validation of LLM outputs:
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Describe whether and how human reviewers examined the model’s outputs, and the degree of independence they had in doing so. Specify the reviewers’ roles (e.g., domain experts, research assistants, subject-matter specialists) and relevant expertise, as well as how many reviewers participated and how their work was organized. Indicate whether outputs were independently annotated, double-checked by multiple reviewers, or merely approved or edited post-hoc by a lead author or investigator.
+Clarify what dimensions of performance were examined. These may include known performance metrics from ML/AI such as accuracy or other metrics like citation correctness, hallucination detection, agreement or inter-rater reliability. State whether qualitative judgments, quantitative metrics, or both were used. If outcome assessment required subjective interpretation, describe assessor qualifications, instructions provided, relevant demographics, and any inter-assessor agreement measures.
+Describe the selection procedure for the reviewed outputs—whether all outputs were examined, a random sample was drawn, or specific cases (e.g., rare events or high-stakes responses) were oversampled to capture potential rare or critical errors. Further report how reviewers were trained or instructed, what criteria or rating scales they used, and how disagreements were resolved. For multi-reviewer settings, provide any inter-rater or inter-assessor reliability statistics (e.g., Cohen’s $\kappa$ or Krippendorff's $\alpha$). Finally, note whether reviewer feedback was used purely for validation or also to refine prompts, retrain models, or adjust study procedures.
+}}
+&
+\begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+    \item[\unchecked] Yes
+    \item[\unchecked] No
+    \item[\unchecked] N/A
+\end{itemize}
+
+Description:\\
+\hline
+\textbf{Item E.2:} Describe any relevant post-processing (e.g., filtering in case of format mismatches, unit conversions, etc.):
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Describe any steps you took to clean or reformat LLM outputs (e.g., converting “positive/neutral/negative” to numeric codes, handling missing values, removing malformed entries). State how you handled inconsistent or unusable outputs and whether corrections were made with an automated script or manually. For example, when generating quantitative estimates (e.g., word counts, probabilities, or durations), the model may return values embedded in free text (e.g., “3.5 seconds”) that require parsing and conversion into standardized numerical units. Post-processing steps should be described clearly, including how formatting errors, null responses, or inconsistent output structures were handled, whether automated scripts or manual corrections were used, and whether any data were excluded or reinterpreted as a result.
+}}
+& \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.7\textwidth}|p{0.3\textwidth}|}
+\hline
+\rowcolor{green!20}
+\textbf{{Reproducibility}} & \textbf{Answer} \\*   % no break after this row
+\hline
+
+\textbf{Item F.1:} Code/notebooks/scripts for LLM calls shared:
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Indicate whether you have shared materials such as code, prompts, logs, or transcripts. Make sure sensitive information (e.g., API keys, private data) is removed. For code, make sure to add a README file.
+}}
+&
+\begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+    \item[\unchecked] Yes
+    \item[\unchecked] No
+    \item[\unchecked] N/A
+\end{itemize}
+
+Link/DOI: \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.7\textwidth}|p{0.3\textwidth}|}
+\hline
+\rowcolor{green!20}
+\textbf{{Competing interests}} & \textbf{Answer} \\*   % no break after this row
+\hline
+
+\textbf{Item G.1:} Funding, support, or other relevant relationships (including in-kind access to compute or models, or professional affiliations):
+
+\textcolor{gray}{{\footnotesize
+\textbf{Explanation:} Disclose any current or past funding, support, or other relevant relationships with entities that have a financial interest in LLMs (this includes not just AI companies like OpenAI, Anthropic, but also tech companies developing or investing in AI, e.g., Google, Meta, Microsoft). This could include (but is not limited to): research funding from or collaborative research with a company with an interest in LLMs for this project or any other project within the past years; in-kind access to compute or models; current or former professional affiliations with a company with an interest in LLMs; personal investments (e.g., stocks) in companies with an interest in LLMs; familial relationship with an employee of a company with an interest in LLMs; etc. Disclose these relationships regardless of whether or not you believe they impacted the research.
+}}
+&
+\begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+    \item[\unchecked] Yes. Description:
+    \item[\unchecked] No
+\end{itemize}
+
+Link/DOI: \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.7\textwidth}|p{0.3\textwidth}|}
+\hline
+\rowcolor{yellow!30}
+\textbf{Optional items} & \textbf{Answer} \\*   % no break after this row
+\hline
+
+\textbf{Justification for the LLM choice along the following dimensions:}
+
+\textcolor{gray}{\footnotesize
+\textbf{Explanation:} Briefly explain why you chose this model for your study and why it is suited to the research needs. Consider:
+Performance, transparency (open-/closed-weight, training data availability), reproducibility, ethical considerations (e.g., data privacy, safety), as well as cost or ease-of-use if relevant.
+}
+&
+\begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+    \item[\unchecked] Performance – Description:
+    \item[\unchecked] Transparency – Description:
+    \item[\unchecked] Reproducibility – Description:
+    \item[\unchecked] Ethical considerations – Description:
+    \item[\unchecked] Others (e.g., cost, ease-of-use) – Description:
+\end{itemize}
+\\
+\hline
+
+\textbf{Discussion of the rationale for the prompt design:}
+
+\textcolor{gray}{\footnotesize
+\textbf{Explanation:} Describe how prompts were designed—structured formats, guidelines followed, or use of automated prompt-design tools.
+}
+&
+
+\\
+\hline
+
+\textbf{Comparison against other methods/LLMs:}
+
+\textcolor{gray}{\footnotesize
+\textbf{Explanation:} If comparisons were made between models, prompts, or methods, describe how the comparison was conducted, metrics used, and fairness of inputs. If alternatives were excluded, justify why.
+}
+&
+\begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}
+    \item[\unchecked] Yes. Metrics:
+    \item[\unchecked] No
+    \item[\unchecked] N/A
+\end{itemize}
+\\
+\hline
+
+\textbf{Training data leakage risks addressed:}
+
+\textcolor{gray}{\footnotesize
+\textbf{Explanation:} Note whether risks of evaluation materials appearing in model training data were considered. Describe mitigation steps such as novelty checks or item restructuring.
+}
+&
+\begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}
+    \item[\unchecked] Yes
+    \item[\unchecked] No
+    \item[\unchecked] N/A
+\end{itemize}
+\\
+\hline
+
+\textbf{Potential risk of bias or systematic differences in LLM behavior:}
+
+\textcolor{gray}{\footnotesize
+\textbf{Explanation:} Reflect on whether the model may perform differently across groups, languages, or contexts in ways that could affect conclusions. Describe any bias checks or mitigation.
+}
+&
+\begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}
+    \item[\unchecked] Yes. Description:
+    \item[\unchecked] No
+\end{itemize}
+\\
+\hline
+
+\textbf{Conversation transcripts:}
+
+\textcolor{gray}{\footnotesize
+\textbf{Explanation:} For studies involving direct researcher/participant interaction with an LLM, provide anonymized transcripts or representative examples.
+}
+&
+\begin{itemize}[leftmargin=*]\setlength{\itemsep}{0pt}
+    \item[\unchecked] Yes, shared without sensitive information. Location:
+    \item[\unchecked] No. Reason for not sharing:
+    \item[\unchecked] N/A
+\end{itemize}
+\\
+\hline
+
+\textbf{Relevant ethical implications of the research:}
+
+\textcolor{gray}{\footnotesize
+\textbf{Explanation:} Discuss broader ethical considerations beyond procedural compliance, including participant well-being, fairness, safety, autonomy, and dual-use risks.
+}
+& \\
+\hline
+
+\textbf{Computational resources:}
+
+\textcolor{gray}{\footnotesize
+\textbf{Explanation:} Report compute usage (e.g., API calls, tokens, GPUs, runtime, financial cost) at study-wide and, if relevant, per-participant levels.
+}
+& \\
+\hline
+\end{longtable}
+
+
+\FloatBarrier
+
+\noindent
+\fcolorbox{gray}{gray!20}{
+  \parbox{.95\linewidth}{
+    \textbf{How to cite:} Feuerriegel et al. (2025). \textit{GUIDE-LLM: A consensus-based reporting checklist for large language models in behavioral and social science.}
+  }
+}
+
+
+\end{document}
