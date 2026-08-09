@@ -291,9 +291,15 @@ def main() -> int:
                     new_text += "\n"
                 new_text += "\n" + "\n\n".join(e.text for e in appended) + "\n"
             central_path.write_text(new_text, encoding="utf-8")
-            local_path.write_text(LOCAL_HEADER, encoding="utf-8")
+            # A refused entry was not written centrally, so it must survive locally.
+            # Blanking the file unconditionally deleted it from both places at once.
+            kept = "\n\n".join(e.text for e, _, _ in refused)
+            local_path.write_text(
+                LOCAL_HEADER + (f"\n{kept}\n" if kept else ""), encoding="utf-8"
+            )
             print(f"\n[push-bib] wrote {len(appended)} new, {len(updated)} updated; "
-                  f"cleared {local_path.name}")
+                  + (f"kept {len(refused)} refused in {local_path.name}"
+                     if refused else f"cleared {local_path.name}"))
         else:
             print("\n[push-bib] dry run, nothing written")
 
