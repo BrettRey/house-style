@@ -451,6 +451,30 @@ AI_CONSTRUCTION_PATTERNS = [
         ),
     ),
     (
+        # The same tic in its metadiscursive form: the second conjunct doesn't
+        # rate the claim, it announces that a point is coming. "and the reason
+        # is worth stating", "and its status should be said plainly", "and the
+        # borrowing needs stating precisely", "and the dispute is worth
+        # resolving". The writer flags a move instead of making it, so the
+        # sentence costs a clause and delivers nothing; the fix is always to
+        # delete the conjunct and let the next sentence do its work.
+        # Added 2026-08-10 after nine instances in one manuscript, eight of
+        # them from two days' editing. Measured before adding: catches 4/4 of
+        # the removed instances and fires once across 400 other .tex files in
+        # the portfolio, on a genuine instance in another paper. Keep the verb
+        # list closed; opening it to any verb makes this fire on ordinary
+        # two-claim conjuncts.
+        "announced move instead of the move",
+        re.compile(
+            r",\s+and\s+(?:the|this|that|its|his|her|their)\s+\w+(?:\s+\w+)?\s+"
+            r"(?:needs?|deserves?|merits?|warrants?|is\s+worth|are\s+worth|"
+            r"should\s+be)\s+"
+            r"(?:stat|say|said|nam|separat|not|register|spell|mark|flagg?|"
+            r"resolv)\w*\b",
+            re.IGNORECASE,
+        ),
+    ),
+    (
         "contrastive negation",
         re.compile(
             r"\bnot\s+(?:only|just|merely|simply)\b[^.!?;]{0,140}\bbut(?:\s+also)?\b",
