@@ -959,6 +959,67 @@ def check_repeated_the_x_is_y_openers(filepath, text):
         ))
 
 
+# Verbatim-duplicated sentences. Revision, not drafting, creates these: a move is
+# relocated (say, a concession pulled forward into the intro) and the original is
+# left in place, so the paper makes the same move twice in the same words. No
+# sectional review catches it, because each instance reads correctly where it sits.
+#
+# Measured 2026-08-10 over 865 distinct manuscripts under papers/ and books/:
+# 26 files flagged (3.0%), 43 duplicate sentences, of which ~90% were genuine
+# duplicated prose. Residual false positives come from manual bibliographies,
+# repeated linguistic examples outside \ea...\z, and inline-math residue, which is
+# why this is a [warning] and why the filters below exist.
+DUPLICATE_SENTENCE_MIN_WORDS = 4
+DUPLICATE_SENTENCE_MAX_WORDS = 25
+# Bibliography-ish lines leak through when a document hand-rolls its references.
+DUPLICATE_SENTENCE_BIBISH_RE = re.compile(
+    r"\d+\s*:\s*\d+|\b(?:19|20)\d\d\b\s*\.?$|^and \w+, \w+\.|^\w+, [A-Z]\."
+)
+
+
+def check_duplicate_sentences(filepath, text):
+    """Warn when the same sentence appears verbatim more than once."""
+    body = re.sub(r'(?<!\\)%.*', '', text)
+    body = re.sub(
+        r'\\begin\{(equation|align|verbatim|lstlisting|tikzpicture|tabular|tabularx|'
+        r'longtable|forest|exe|figure|table|quote|quotation|thebibliography)\*?\}'
+        r'.*?\\end\{\1\*?\}',
+        '', body, flags=re.DOTALL)
+    body = re.sub(r'\\ea\b.*?\\z\b', '', body, flags=re.DOTALL)   # gb4e examples
+    body = re.sub(r'\\\(.*?\\\)', '', body, flags=re.DOTALL)
+    body = re.sub(r'\$[^$]*\$', '', body)
+    prose = re.sub(r'\s+', ' ', strip_latex(body))
+
+    seen = {}
+    for sentence in re.split(r'(?<=[.!?])\s+', prose):
+        sentence = sentence.strip()
+        word_count = len(sentence.split())
+        if not (DUPLICATE_SENTENCE_MIN_WORDS <= word_count <= DUPLICATE_SENTENCE_MAX_WORDS):
+            continue
+        if DUPLICATE_SENTENCE_BIBISH_RE.search(sentence):
+            continue
+        seen.setdefault(sentence.lower(), []).append(sentence)
+
+    for occurrences in seen.values():
+        if len(occurrences) < 2:
+            continue
+        snippet = occurrences[0][:70]
+        line_num = 1
+        for idx, line in enumerate(text.split('\n'), start=1):
+            if occurrences[0][:30] in line:
+                line_num = idx
+                break
+        VIOLATIONS.append((
+            filepath,
+            line_num,
+            (
+                f"[warning] Sentence appears verbatim {len(occurrences)}x - "
+                f"usually a move duplicated by revision; cut one or make the second do new work"
+            ),
+            snippet,
+        ))
+
+
 # Integral-vs-parenthetical citation: author-as-agent immediately before \citep{}.
 # Conservative/advisory: person-implying reporting verbs only, subject must be a
 # capitalized non-stoplist token, and the \citep must sit in the same sentence
@@ -999,6 +1060,7 @@ def check_file(filepath):
     lines = text.split('\n')
     layout_depth = 0
     check_repeated_the_x_is_y_openers(filepath, text)
+    check_duplicate_sentences(filepath, text)
 
     for i, line in enumerate(lines, 1):
         # Skip pure comment lines
