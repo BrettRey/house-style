@@ -46,7 +46,13 @@
 ]{geometry}
 
 \usepackage[british]{babel} % Oxford spelling: -ize where standard, British punctuation/hyphenation
-\usepackage[final]{microtype}
+% Guarded: Quarto's LaTeX template loads microtype itself and inserts
+% include-in-header after its own \usepackage calls, so a bare
+% \usepackage[final]{microtype} here is an option clash under `quarto render
+% --to pdf`. Plain xelatex reaches this first and loads it with [final].
+\makeatletter
+\@ifpackageloaded{microtype}{}{\usepackage[final]{microtype}}
+\makeatother
 
 % ===========================
 % HEADINGS
