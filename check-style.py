@@ -308,6 +308,12 @@ AI_REPEAT_REVIEW_WORDS = {
 }
 AI_REPEAT_REVIEW_THRESHOLD = 2
 
+# "load-bearing assumption" is a term of art from Assumption-Based Planning
+# (Dewar et al. 1993), standard in the DMDU literature. Permitted in that exact
+# collocation only, and capped, because the phrase is otherwise a very-high-
+# signal LLM tell and correct usage at volume still reads as the tic.
+LOAD_BEARING_CAP = 2
+
 # Filler intensifiers: they raise the writer's commitment without changing the
 # claim, and they usually delete cleanly ("this genuinely fails" = "this
 # fails"). Ordinary enough that one use is no signal; a run of them is.
@@ -412,8 +418,8 @@ AI_SIGNATURE_PHRASES = [
     "great question",
     # Faux-coaching / structural-spine tics
     "let me refine your claim",
-    "let me refine your load-bearing claim",
-    "load-bearing claim",
+    # "load-bearing X" is handled by the counting check in check_ai_voice(),
+    # which permits the capped ABP term of art and flags every other use.
     "the one place i'd still push",
     "because i think it matters",
     "you're doing zero moves",
@@ -595,6 +601,32 @@ def check_ai_voice(filepath):
             filepath, 0,
             f"AI word co-occurrence: {density} signature words detected",
             ", ".join(sorted_words)
+        ))
+
+    # --- load-bearing: banned except the ABP term of art, capped ---
+    # "load-bearing assumption" (Dewar et al. 1993) is permitted up to
+    # LOAD_BEARING_CAP times per paper. Every other use is the praise-as-
+    # structure tic. Enforced here because a cap nobody checks is not a cap.
+    lb_all = re.findall(r'load[-\s]bearing\s+(\w+)', prose_lower)
+    lb_technical = [w for w in lb_all if w == 'assumption' or w == 'assumptions']
+    lb_other = [w for w in lb_all if w not in ('assumption', 'assumptions')]
+    lb_bare = len(re.findall(r'load[-\s]bearing\b', prose_lower)) - len(lb_all)
+
+    if lb_other or lb_bare:
+        detail = ", ".join(f'"load-bearing {w}"' for w in sorted(set(lb_other)))
+        if lb_bare:
+            detail = (detail + ", " if detail else "") + f"bare 'load-bearing' x{lb_bare}"
+        AI_FINDINGS.append((
+            filepath, 0,
+            "'load-bearing' outside the ABP term of art (praise-as-structure tic)",
+            detail,
+        ))
+    if len(lb_technical) > LOAD_BEARING_CAP:
+        AI_FINDINGS.append((
+            filepath, 0,
+            f"'load-bearing assumption' x{len(lb_technical)} exceeds the "
+            f"cap of {LOAD_BEARING_CAP} per paper",
+            "use 'critical assumption', or name the assumption",
         ))
 
     repeated_words = {
