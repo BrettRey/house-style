@@ -13,7 +13,9 @@ This tool forces the real reading condition:
   extract  -- pull ONLY what a desk editor sees (title + abstract + first ~2
               pages, de-macroed to plain text), and emit the hostile-editor
               extraction prompt. Feed that to N independent readers (ideally
-              different models; use agent_review or fresh subagents).
+              different models; use fresh independent subagents and
+              tools/codex/bin/codex-readonly when cross-family redundancy
+              matters).
   score    -- take the readers' JSON answers and report the scorecard: which
               of {problem, debate, gap, contribution} came back MISSING, the
               advance/reject tally, and the problem/contribution statements
@@ -187,8 +189,9 @@ def cmd_extract(a):
         print(opening)
         print("\n=== to run the gate ===")
         print("Feed the hostile-editor prompt (coldread.py extract <f> --prompt-only) to")
-        print("3+ independent readers, ideally different models (agent_review or fresh")
-        print("subagents). Collect each reader's JSON, then: coldread.py score r1 r2 r3")
+        print("3+ independent readers, ideally different models (fresh independent")
+        print("subagents plus tools/codex/bin/codex-readonly when useful). Collect")
+        print("each reader's JSON, then: coldread.py score r1 r2 r3")
     return 0
 
 

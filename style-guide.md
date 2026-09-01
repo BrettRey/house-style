@@ -262,7 +262,11 @@ Phrase- and frame-level tics that mark text as AI-generated. Avoid in production
   - **Watch for overuse:** potential, findings, crucial, essential, significant, key, valuable, meaningful, diverse, complex, creative, critical, landscape, enhance, navigate, journey, streamline, dynamic.
   - **AI adverbs:** additionally, aptly, creatively, moreover, successfully. Most are removable without loss.
   - **Filler intensifiers:** genuinely, really, truly, actually. These raise the writer's commitment without changing the claim, and they usually delete cleanly ("this genuinely fails" is "this fails"). Keep one only where it marks a real contrast with something stated (an apparent case against an actual one).
+  - **Manner adverbs Claude overuses (Abraham 2026, github.com/louisabraham/load-bearing).** A corpus study of 461k GitHub PR descriptions found a cluster of manner adverbs that Claude uses at 14--34x the human rate: *plainly, quietly, deliberately, precisely, merely, loudly, silently, faithfully, demonstrably, legitimately, structurally, empirically, routinely, mechanically*. Several of these are normal in academic prose at their natural frequency (*empirically, structurally*), so the test is the same as for `robust`: inside a technical collocation naming something observed or measured (*empirically tested, structurally ambiguous*), keep it; as a bare intensifier or sentence adverb (*this is precisely the problem, the account deliberately avoids*), review it. The risk is overuse, not use. A paper with four *precisely*s and three *deliberately*s reads as AI-drafted even if each one is locally defensible.
+  - **Mechanism metaphors (Abraham 2026, same source).** Claude describes code as though it were a building with physical parts: *backstop, chokepoint, tripwire, seam, wedge, lever, ratchet, machinery, ceiling, floor, ladder, gate/gated, trap, spine, keystone*. Several rank above 15x lift. In Brett's HPC work, some of these are literal (*mechanism, machinery*), but most are imported metaphor. The same cluster shows up in CLAUDE.md files and agent instructions throughout this portfolio, which means it can leak from configuration prose into manuscript prose. Watch for it in drafts, especially in passages about how categories or grammars "work." A backstop in a `.claude/rules/` file is fine; a backstop in a linguistics paper is a tell.
+  - **Agency verbs for inanimate subjects.** Claude characteristically animates abstractions with verbs like *carries, survives, holds, settles, refuses, admits, rides, rests, fires, lands, earns, buys, wins*. These appear at 10--21x lift in Abraham's data. In prose about language, some are natural (*the account holds, the distinction survives scrutiny*), but a run of them ("the category carries the prediction, which survives the test, which buys the inference") reads as Claude's characteristic voice. The fix is usually to name the human agent or replace the metaphor with a finite clause: "speakers who acquire the category can predict..." rather than "the category carries the prediction."
   - The principle is incidence and distribution, not blanket prohibition. One use of a word may be harmless; repeated use in one article usually needs pruning unless the word has a technical reason to be there. As a working threshold, a high-signal non-technical word appearing more than once in an article should be reviewed, and recurrence across Brett's papers should be watched as a house-style drift. The discriminator is the slot the word sits in: inside a technical collocation naming something measured or tested, it's usually earning its place ("robustness check"); modifying an abstraction, it usually isn't ("robust framework"). When unsure, count it in the corpus. `profound`, `nuanced`, and `foster` all run high in Brett's papers and all turn out to be evaluative filler, so frequency alone doesn't settle it.
+  - **COCA-academic baseline (aspiration).** The Abraham data gives lift values (how much more Claude uses a word than human writers), but the right baseline for academic papers is COCA-academic frequency, not GitHub PRs. When English-Corpora.org access returns, calibrate per-word thresholds for the manner-adverb and mechanism-metaphor lists against COCA-academic rates, and build the thresholds into `check-style.py`. Until then, the lift values serve as a ranking: words above 15x are very high signal, 8--15x moderate, below 8x weakly elevated. <!--asof:2026-08 verify:manual-->
 - Avoid AI structural patterns: formulaic openings that scene-set, immediately quote an authority, or front-load historical context; optimistically vague conclusions; quotes followed by narrative gloss ("she said, gesturing at the city"); generic openers and closers that don't carry information; false ranges ("from intimate gatherings to global movements") where the endpoints don't form a real scale; triadic adjective strings that simulate coverage ("innovative, transformative, and groundbreaking").
 - **Avoid unsupported evaluative participial tags.** Final supplements such as "... , highlighting the pattern's importance", "... , underscoring the need for", "... , reflecting broader tensions", "... , cementing its role", or "... , paving the way for" often smuggle appraisal in without evidence. Keep gerund-participial supplements when they supply genuine event structure or share an explicit subject; rewrite when the participle merely evaluates the previous clause.
 - **Avoid the `while maintaining/preserving` trade-off frame** unless there is a real trade-off. "The method increases coverage while preserving accuracy" is fine if both quantities are measured; "streamlines the process while maintaining quality" is usually managerial fog.
@@ -286,6 +290,26 @@ Phrase- and frame-level tics that mark text as AI-generated. Avoid in production
 - **Use LLM critique as sparring, not evidence:** model suggestions can sharpen hypotheses, expose weak links, and find missing contrasts. They do not count as source-grounded support.
 <!-- /claude-rule -->
 
+### Gratuitous Precision
+
+<!-- claude-rule: writing-style -->
+## Gratuitous Precision
+
+Report a number to the resolution its evidence supports and stop there. Extra digits read as measurement, cost nothing to type, and survive every draft because nobody thinks to question them.
+
+**The floor is one observation.** A proportion drawn from N cases cannot be finer than 1/N. In `adversarial-pragmatics`, judge base rates over 54 objects are reported as 66.7\% and 85.2\%; one object is 1.9 points, so the tenths claim about twenty times the resolution the sample has. Write 67\% and 85\%, or give the counts, which are shorter and let the reader check the arithmetic. Under roughly 20 cases, drop the percentage and give the count.
+
+**A hedge and its digits cancel each other.** "preserve about 65.5\% of local neighbourhood structure" (`reciprocals-boundary-phenomena`); "approximately 5.84 per million", off 248 tokens (`english-interjections`). Keep the hedge and round, or keep the digits and drop the hedge. A decimal that is itself the rounding ("about 0.3") is fine; the conflict starts at the third significant figure, where the hedge stops covering the digits.
+
+**Don't state an estimate more finely than its interval.** "the extended-family rate of 6.2\% [4.0--11.0]" (`english-kinship-terms`), in a sentence that gives the comparison rate as "41\% [32--51]". The interval spans nearly a factor of three, so the tenth is noise, and two rates in one sentence should be reported alike: 6\% [4--11].
+
+**Digits get inherited rather than chosen.** "282.53 hours of observation" and "81.82\% of defecations" (`metaphor-cross-domain-extension`, both from Cafazzo 2012) are whatever the source's calculator emitted, and the percentage has no denominator anywhere near it, so the reader can't audit it. Quote a source's figure verbatim when the figure itself is the point. Otherwise round it and give N.
+
+Prose does this too: exact counts of things nobody counted ("the four ways the account fails"), durations to the minute, a date to the day where the year is the claim.
+
+The test: change the last digit. If nothing in the argument changes, the digit was decoration.
+<!-- /claude-rule -->
+
 ### Rapoport's Rules (Dennett 2013)
 
 <!-- claude-rule: writing-style -->
@@ -307,11 +331,16 @@ This applies to all critical commentary, whether in papers, reviews, or email. T
 
 Uses `langsci-gb4e` package. **Note:** No `exe` environment.
 
+**Rule:** Put every numbered object-language expression in `\mention{}`. Keep
+judgement macros outside the mention. On a `\gll` surface line, apply
+`\mention{}` to each aligned token separately so word-by-word alignment is
+preserved; gloss and free-translation lines remain roman.
+
 ### Simple Example
 
 ```latex
 \ea\label{ex:simple}
-\textit{The committee have decided to adjourn.}
+\mention{The committee have decided to adjourn.}
 \z
 ```
 
@@ -319,9 +348,9 @@ Uses `langsci-gb4e` package. **Note:** No `exe` environment.
 
 ```latex
 \ea\label{ex:sub}
-    \ea \textit{She has already left.}
-    \ex[*]{\ungram{\textit{She have already left.}}}
-    \ex[\#]{\odd{\textit{The square triangle laughed.}}}
+    \ea \mention{She has already left.}
+    \ex[*]{\ungram{\mention{She have already left.}}}
+    \ex[\#]{\odd{\mention{The square triangle laughed.}}}
     \z
 \z
 ```
@@ -335,13 +364,13 @@ Cross-reference: `see (\ref{ex:sub})`
 ```latex
 % Same paragraph continues (no indent)
 \ea\label{ex:cont}
-\textit{The committee have decided.}
+\mention{The committee have decided.}
 \z
 This shows that collective nouns can trigger plural agreement.
 
 % New paragraph starts (indented)
 \ea\label{ex:new}
-\textit{The committee has decided.}
+\mention{The committee has decided.}
 \z
 
 A different pattern emerges with singular agreement.
@@ -353,7 +382,7 @@ Abbreviations in small caps using `\abbr{}`:
 
 ```latex
 \ea\label{ex:gloss}
-\gll Ich sehe den Hund. \\
+\gll \mention{Ich} \mention{sehe} \mention{den} \mention{Hund.} \\
      I see the.\abbr{acc} dog \\
 \glt `I see the dog.'
 \z

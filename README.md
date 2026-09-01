@@ -1,6 +1,6 @@
 # House Style System
 
-**Version:** 2.2.0
+**Version:** 2.3.0
 
 This directory contains the house style framework for LaTeX academic papers by Brett Reynolds.
 
@@ -68,7 +68,7 @@ This creates a new paper directory with:
 
 ```
 .house-style/
-├── VERSION                      # 2.2.0
+├── VERSION                      # 2.3.0
 ├── preamble.tex                 # LaTeX setup
 ├── style-rules.yaml             # Machine-readable rules
 ├── style-guide.md               # Human-readable guide
@@ -158,6 +158,16 @@ New_Paper_Name/
 - **AI assistants**: Read `style-rules.yaml` (machine-readable)
 
 ## Version History
+
+### 2.3.0 (2026-08-29)
+- Gratuitous precision added to `style-guide.md` as a writing-style rule: report a number
+  to the resolution its evidence supports. Four tells, each grounded in an instance in the
+  portfolio (a proportion finer than 1/N, a hedge next to its own third significant figure,
+  a point estimate finer than its interval, digits inherited from a calculator or a source)
+- `style-rules.yaml`: `prose.gratuitous_precision` with the thresholds the linters use
+- `check-style.py` and `check-style-md.py`: three advisory checks matching those thresholds
+  (hedged figure above 2 significant figures, percentage above 3, estimate finer than its
+  stated interval). Table rows are skipped; advisory only, no exit-code effect
 
 ### 2.2.0 (2026-07-30)
 - Three writing-style rules added to `style-guide.md`: corrective negation without an

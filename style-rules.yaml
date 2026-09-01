@@ -99,6 +99,19 @@ prose:
     rule: "Keep paragraphs under 100 words on average; aim for ~60"
     note: "Dense 200+ word paragraphs should be broken into 2-4 shorter units"
 
+  gratuitous_precision:
+    rule: "Report a number to the resolution its evidence supports, and no further"
+    tests:
+      - "A proportion cannot be finer than 1/N; under ~20 cases give the count, not a percentage"
+      - "A hedge stops covering its digits at the third significant figure (about 0.3 is fine; about 65.5 is not)"
+      - "Don't state an estimate more finely than its interval"
+      - "Round inherited digits (calculator or source output) unless the figure itself is the point"
+    thresholds:
+      percent_significant_figures: 3
+      hedged_significant_figures: 2
+      interval_resolution_factor: 20
+    checked_by: "check-style.py, check-style-md.py"
+
   avoid:
     throat_clearers:
       - "It is important to note that"

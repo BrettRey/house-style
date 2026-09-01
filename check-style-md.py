@@ -204,6 +204,71 @@ RESTATEMENT_REVELATION_RE = re.compile(
 )
 
 
+# --- Gratuitous precision -------------------------------------------------
+# Digits beyond what the evidence supports. See "Gratuitous Precision" in
+# .house-style/style-guide.md.
+HEDGED_DECIMAL_RE = re.compile(
+    r"\b(?:about|around|roughly|approximately|nearly|almost|circa)\s+"
+    r"(\d{1,3}(?:,\d{3})*\.\d+)",
+    re.IGNORECASE,
+)
+HEDGED_SIGFIG_LIMIT = 2  # "about 0.3" is a rounding; "about 65.5" is not
+PERCENT_FIGURE_RE = re.compile(r"\b(\d{1,3}(?:,\d{3})*\.\d+)\s*%")
+PERCENT_SIGFIG_LIMIT = 3
+ESTIMATE_INTERVAL_RE = re.compile(
+    r"\b(\d+\.\d+)\s*%?\s*\[\s*(\d+(?:\.\d+)?)\s*(?:--|\u2013|-)\s*(\d+(?:\.\d+)?)\s*\]"
+)
+INTERVAL_RESOLUTION_FACTOR = 20
+
+
+def significant_figures(numeral):
+    """Significant digits in a decimal numeral written as text ("0.24" -> 2)."""
+    return len(numeral.replace(",", "").replace(".", "").lstrip("0"))
+
+
+def decimal_places(numeral):
+    return len(numeral.split(".")[1]) if "." in numeral else 0
+
+
+def precision_issues(line):
+    """Numbers reported more finely than their evidence supports."""
+    found = []
+    if "|" in line:  # table rows carry precision legitimately
+        return found
+    for match in HEDGED_DECIMAL_RE.finditer(line):
+        if significant_figures(match.group(1)) > HEDGED_SIGFIG_LIMIT:
+            found.append((
+                "gratuitous precision",
+                f"hedge and digits cancel ({match.group(0).strip()}); "
+                "round the figure or drop the hedge",
+            ))
+    for match in PERCENT_FIGURE_RE.finditer(line):
+        numeral = match.group(1)
+        sig = significant_figures(numeral)
+        if sig > PERCENT_SIGFIG_LIMIT:
+            found.append((
+                "gratuitous precision",
+                f"{numeral}% carries {sig} significant figures; "
+                "round it, or give the count and N",
+            ))
+    for match in ESTIMATE_INTERVAL_RE.finditer(line):
+        estimate, low, high = match.group(1), match.group(2), match.group(3)
+        places = decimal_places(estimate)
+        if not places:
+            continue
+        try:
+            width = abs(float(high) - float(low))
+        except ValueError:
+            continue
+        if width >= INTERVAL_RESOLUTION_FACTOR * (10 ** -places):
+            found.append((
+                "gratuitous precision",
+                f"estimate {estimate} is finer than its interval "
+                f"[{low}--{high}]; round to the interval's resolution",
+            ))
+    return found
+
+
 def is_skip_line(line):
     s = line.strip()
     return (
@@ -264,6 +329,8 @@ def lint_file(path):
             issues.append((i, "em-dash", "use commas, parens, or en-dash with spaces"))
         if "---" in line and line.strip() != "---":
             issues.append((i, "ascii em-dash (---)", line.strip()[:60]))
+        for label, detail in precision_issues(line):
+            issues.append((i, label, detail))
 
     # Paragraph length (>100 words)
     the_x_is_y_openers = []
