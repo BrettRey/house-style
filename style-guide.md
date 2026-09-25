@@ -483,6 +483,14 @@ Using `biblatex` with `natbib=true`:
 
 Scholarly journals use structural apparatus sparingly. Avoid textbook-style formatting.
 
+### Abstract Format
+
+The default abstract format is **NBER-style**: a single paragraph of plain prose that states the question, the approach, and the main result without internal structure markers. No "In this paper, we..." opening. No numbered contributions. No section-by-section preview. The abstract tells the reader what the paper found and why it matters, not what the paper contains.
+
+An NBER-style abstract typically runs 100-200 words (adjust to venue limits). It opens with the problem or puzzle, states the central claim or finding in the middle, and closes with the main consequence or implication. It reads as a self-contained argument, not a table of contents.
+
+Depart from this default only with justification: a venue that mandates structured abstracts (Background / Methods / Results / Conclusion), a paper whose empirical structure genuinely needs the structured format to be informative, or a co-author's strong preference. Record the departure and the reason in the project's `DECISIONS.md`.
+
 ### Abstract and Keywords
 
 Papers should include keywords by default from the seed template. Put a visible keyword line immediately after the abstract and keep the PDF metadata `pdfkeywords` in sync.
