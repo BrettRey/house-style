@@ -93,7 +93,20 @@ AI_TIC_PHRASES = [
     "of course!",
     "certainly!",
     "great question",
+    # Opus 5 and Sonnet 5 favourites that Opus 5.5 dropped (Aerts 2026); a
+    # surviving one dates the passage. The fiction phrases rose in Opus 5.5.
+    "the honest answer is",
+    "matters enormously",
+    "several interconnected",
+    "for a long moment",
+    "felt something",
+    "afternoon light",
 ]
+
+# "In short," is the commonest lexical seal on a paragraph closer; a second
+# use in one document is the signal (Opus 5.5 rate: Aerts 2026).
+IN_SHORT_RE = re.compile(r"\bin\s+short\s*[,:]", re.IGNORECASE)
+IN_SHORT_THRESHOLD = 2
 
 PRESENT_SELF_REFERENCE_RE = re.compile(
     r"\bthe present\s+"
@@ -113,7 +126,7 @@ ARGUMENT_OBJECT_OPENER_RE = re.compile(
     r"(?:claim|argument|account|proposal|analysis|problem|issue|point|"
     r"question|objection|reply|response|contrast|distinction|move|"
     r"framework|view|thesis|diagnosis|answer|result|evidence|lesson|"
-    r"implication|worry|target|section|paper|profile)\b"
+    r"implication|worry|target|section|paper|profile|idea)\b"
 )
 ARGUMENT_OBJECT_OPENER_THRESHOLD = 4
 
@@ -388,6 +401,7 @@ def lint_file(path):
     word_counter = Counter()
     high_signal_counter = Counter()
     high_signal_lines = {}
+    in_short_lines = []
     for i, line in enumerate(lines, start=1):
         if is_skip_line(line):
             continue
@@ -407,6 +421,8 @@ def lint_file(path):
         for phrase in AI_TIC_PHRASES:
             if phrase in line_lower:
                 issues.append((i, "AI tic phrase", phrase))
+        if IN_SHORT_RE.search(line):
+            in_short_lines.append(i)
         for label, pattern in CONTRASTIVE_NEGATION_PATTERNS:
             if pattern.search(line):
                 issues.append((i, "AI construction", label))
@@ -447,6 +463,17 @@ def lint_file(path):
                 "AI high-signal repeated",
                 f"'{word}' used {count} times (lines {lines}); prune unless technical",
             ))
+
+    if len(in_short_lines) >= IN_SHORT_THRESHOLD:
+        issues.append((
+            in_short_lines[0],
+            "cadence warning",
+            (
+                f"'In short' summary closer used {len(in_short_lines)} times "
+                f"(lines {', '.join(map(str, in_short_lines))}); cut the closer, "
+                "or keep it only where it states a consequence"
+            ),
+        ))
 
     # Overuse summary (>2 occurrences)
     for word, count in word_counter.items():

@@ -92,7 +92,7 @@ ARGUMENT_OBJECT_OPENER_RE = re.compile(
     r"(?:claim|argument|account|proposal|analysis|problem|issue|point|"
     r"question|objection|reply|response|contrast|distinction|move|"
     r"framework|view|thesis|diagnosis|answer|result|evidence|lesson|"
-    r"implication|worry|target|section|paper|profile)\b"
+    r"implication|worry|target|section|paper|profile|idea)\b"
 )
 ARGUMENT_OBJECT_OPENER_THRESHOLD = 4
 
@@ -317,7 +317,7 @@ LOAD_BEARING_CAP = 2
 # Filler intensifiers: they raise the writer's commitment without changing the
 # claim, and they usually delete cleanly ("this genuinely fails" = "this
 # fails"). Ordinary enough that one use is no signal; a run of them is.
-FILLER_INTENSIFIERS = {"genuinely", "really", "truly", "actually"}
+FILLER_INTENSIFIERS = {"genuinely", "really", "truly", "actually", "enormously"}
 FILLER_INTENSIFIER_THRESHOLD = 3
 
 # Phrases individually diagnostic of AI voice.
@@ -431,7 +431,21 @@ AI_SIGNATURE_PHRASES = [
     "pull one, and the other goes inert",
     "doing the heavy lifting",
     "deserves the weight",
+    # Opus 5 and Sonnet 5 favourites that Opus 5.5 dropped (Aerts 2026); a
+    # surviving one dates the passage. The fiction phrases rose in Opus 5.5.
+    "the honest answer is",
+    "matters enormously",
+    "several interconnected",
+    "for a long moment",
+    "felt something",
+    "afternoon light",
 ]
+
+# "In short," is the commonest lexical seal on a paragraph closer. Brett's
+# manuscripts rarely use it more than once; Opus 5.5 uses it eleven times as
+# often as Opus 5 (Aerts 2026), so a second use in one document is the signal.
+IN_SHORT_RE = re.compile(r"\bin\s+short\s*[,:]", re.IGNORECASE)
+IN_SHORT_THRESHOLD = 2
 
 AI_CONSTRUCTION_PATTERNS = [
     (
@@ -738,6 +752,17 @@ def check_ai_voice(filepath):
 
     # --- Phrase matching (line-level for line numbers) ---
     lines = text.split('\n')
+    in_short_lines = [
+        i for i, line in enumerate(lines, 1)
+        if not line.strip().startswith('%') and IN_SHORT_RE.search(strip_latex(line))
+    ]
+    if len(in_short_lines) >= IN_SHORT_THRESHOLD:
+        AI_FINDINGS.append((
+            filepath, in_short_lines[0],
+            f"'In short' summary closer x{len(in_short_lines)} (lines "
+            f"{', '.join(map(str, in_short_lines))})",
+            "cut the closer, or keep it only where it states a consequence",
+        ))
     for i, line in enumerate(lines, 1):
         if line.strip().startswith('%'):
             continue
