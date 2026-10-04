@@ -3,19 +3,25 @@
 # Configuration
 LATEX = xelatex
 BIBER = biber
-MAIN = main
-PDF_BASENAME ?= $(notdir $(CURDIR))
+MAIN = {{PAPER_DIR}}
+PDF_BASENAME ?= $(MAIN)
 SUBMISSION_PDF = $(PDF_BASENAME).pdf
 OUTDIR = .
 
 # Targets
 .PHONY: all quick refresh-submission-pdf clean distclean view help test
 
-# Default target: build the internal PDF and a named submission/preprint copy
+# Default target: build the PDF, plus a renamed copy only when PDF_BASENAME differs
+# (with equal names a copy rule would override the build rule and make would build nothing)
+all: $(MAIN).pdf
+ifneq ($(SUBMISSION_PDF),$(MAIN).pdf)
 all: $(SUBMISSION_PDF)
+$(SUBMISSION_PDF): $(MAIN).pdf
+	@$(MAKE) --no-print-directory refresh-submission-pdf
+endif
 
 # Full build sequence with bibliography
-$(MAIN).pdf: $(MAIN).tex references.bib
+$(MAIN).pdf: $(MAIN).tex references.bib $(wildcard references-local.bib) $(wildcard sections/*.tex) $(wildcard figures/*.pdf)
 	@echo "==> First LaTeX pass..."
 	$(LATEX) -output-directory=$(OUTDIR) $(MAIN).tex
 	@echo "==> Running Biber..."
@@ -25,9 +31,6 @@ $(MAIN).pdf: $(MAIN).tex references.bib
 	@echo "==> Third LaTeX pass (finalizing)..."
 	$(LATEX) -output-directory=$(OUTDIR) $(MAIN).tex
 	@echo "==> Build complete: $(MAIN).pdf"
-
-$(SUBMISSION_PDF): $(MAIN).pdf
-	@$(MAKE) --no-print-directory refresh-submission-pdf
 
 refresh-submission-pdf:
 	@if [ "$(SUBMISSION_PDF)" != "$(MAIN).pdf" ]; then \
@@ -75,7 +78,7 @@ test:
 # Show available targets
 help:
 	@echo "Available targets:"
-	@echo "  make          - Build main.pdf plus named submission/preprint PDF"
+	@echo "  make          - Build $(MAIN).pdf (plus a renamed copy if PDF_BASENAME is set)"
 	@echo "  make quick    - Quick build (single pass) and refresh named PDF"
 	@echo "  make lualatex - Build using LuaLaTeX (not recommended)"
 	@echo "  make clean    - Remove build artifacts (keep PDF)"
@@ -85,4 +88,4 @@ help:
 	@echo "  make help     - Show this help message"
 	@echo ""
 	@echo "Configuration:"
-	@echo "  PDF_BASENAME  - File-safe basename for upload PDF (default: project directory)"
+	@echo "  PDF_BASENAME  - File-safe basename for an upload copy (default: same as the manuscript)"

@@ -41,14 +41,14 @@ XeLaTeX, not pdfLaTeX (font requirements). Avoid LuaLaTeX: it runs words
 together in the PDF text layer, breaking copy-paste and accessibility.
 
 ```bash
-make              # full build: main.pdf plus the named upload PDF
+make              # full build: {{PAPER_DIR}}.pdf
 make quick        # single pass
 make clean        # clean artifacts
 ```
 
-The Makefile keeps `main.pdf` as the build product and also writes a file-safe
-named copy for upload. Override `PDF_BASENAME` when a venue wants a specific
-name, e.g. `PDF_BASENAME = Reynolds-Short-Title`.
+The manuscript is `{{PAPER_DIR}}.tex` and builds `{{PAPER_DIR}}.pdf`; don't rename it
+`main.tex` (canon: meaningful-file-names-not-main). Set `PDF_BASENAME` when a venue
+wants a specific upload name, e.g. `PDF_BASENAME = Reynolds-Short-Title`.
 
 Never hardcode a TeX Live path in `\setmainfont`. Write the font filenames and
 let kpathsea resolve them; a `Path=/usr/local/texlive/<year>/...` line makes the
@@ -59,7 +59,7 @@ to send it.
 
 ```
 {{PAPER_DIR}}/
-├── main.tex                  # the manuscript
+├── {{PAPER_DIR}}.tex         # the manuscript
 ├── references.bib            # symlink to the central bibliography
 ├── references-local.bib      # project-specific entries; /push-bib merges these
 ├── .canon-stamp              # what this paper has been reconciled against

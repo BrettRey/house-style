@@ -107,13 +107,19 @@ acknowledged: []
 EOF
 success "Canon stamp created (canon $CANON_VERSION)"
 
-# Customize main.tex title
+# Name the manuscript for the paper, never main.tex (canon: meaningful-file-names-not-main).
+# The template ships manuscript.tex; the paper gets <directory>.tex and builds <directory>.pdf.
 info "Customizing files..."
-if [ -f "main.tex" ]; then
-    # Update title in main.tex
-    # This is a simple approach - you may need to adjust based on template structure
-    sed -i.bak "s/{{PAPER_TITLE}}/$PAPER_TITLE/g" main.tex
-    rm -f main.tex.bak
+if [ -f "manuscript.tex" ]; then
+    mv manuscript.tex "$PAPER_DIR.tex"
+fi
+if [ -f "$PAPER_DIR.tex" ]; then
+    sed -i.bak "s/{{PAPER_TITLE}}/$PAPER_TITLE/g" "$PAPER_DIR.tex"
+    rm -f "$PAPER_DIR.tex.bak"
+fi
+if [ -f "Makefile" ]; then
+    sed -i.bak "s/{{PAPER_DIR}}/$PAPER_DIR/g" Makefile
+    rm -f Makefile.bak
 fi
 
 # Update AI documentation with paper name
@@ -152,6 +158,6 @@ echo ""
 echo "Next steps:"
 echo "  cd $PAPER_DIR"
 echo "  replace abstract and keyword placeholders"
-echo "  make          # Build main.pdf plus named upload PDF"
+echo "  make          # Build $PAPER_DIR.pdf"
 echo "  code .        # Open in editor"
 echo ""
