@@ -72,7 +72,7 @@ fi
 
 # Copy template
 info "Copying template..."
-cp -r "$TEMPLATE_DIR" "$PAPER_DIR"
+cp -R "$TEMPLATE_DIR" "$PAPER_DIR"  # -R keeps AGENTS.md a symlink; -r follows it
 success "Template copied"
 
 # Enter new directory
@@ -124,6 +124,9 @@ fi
 
 # Update AI documentation with paper name
 for doc in CLAUDE.md AGENTS.md GEMINI.md; do
+    # AGENTS.md is a symlink to CLAUDE.md in the template; sed -i would replace the
+    # link with a copy, so skip links (the target is edited under its own name).
+    [ -L "$doc" ] && continue
     if [ -f "$doc" ]; then
         sed -i.bak "s/{{PAPER_TITLE}}/$PAPER_TITLE/g" "$doc"
         sed -i.bak "s/{{PAPER_DIR}}/$PAPER_DIR/g" "$doc"

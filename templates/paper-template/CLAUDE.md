@@ -1,5 +1,5 @@
 # CLAUDE.md
-<!-- SUMMARY: Agent guidance for {{PAPER_TITLE}}; deliberately short, points at the portfolio rules rather than copying them · status: active · updated: 2026-07-30 -->
+<!-- SUMMARY: Agent guidance for {{PAPER_TITLE}}; deliberately short, points at the portfolio rules rather than copying them · status: active · updated: 2026-09-02 -->
 
 Guidance for Claude Code, Codex, and other agents working in this repository.
 
@@ -11,13 +11,8 @@ Academic paper: **{{PAPER_TITLE}}**, by Brett Reynolds.
 
 House style, writing style, terminology, citation practice, dispatch
 invocations, and submission process live in the portfolio rules. They are
-**not** copied here, on purpose.
-
-The previous version of this template copied all of it. Papers scaffolded from
-it were still routing agents through the deprecated Gemini CLI, and passing
-codex its prompt via a flag that means something else, months after both had
-been superseded, because a copy has no way to learn that its source changed.
-Anything duplicated into this file will go stale the same way.
+not copied here: a copy cannot learn that its source changed, so anything
+duplicated into this file goes stale.
 
 | What you need | Where it actually lives |
 |---|---|
