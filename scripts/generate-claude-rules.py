@@ -28,6 +28,27 @@ GENERATED_RULES = (
     "cgel-conventions",
 )
 
+# Path scoping (Claude Code `paths:` frontmatter). A rule with an entry here loads
+# only when the session reads or edits a matching file; rules without one load in
+# every session. Globs are matched against the project root; extension globs are
+# the primary match because the root of an inherited rules directory is not
+# documented for nested repos, and directory globs are a supplement.
+PATHS = {
+    "writing-style": ["**/*.{tex,qmd,Rmd}", "papers/**", "books/**", "grants/**", "personal/**/*.md", "**/correspondence/**"],
+    "latex-house-style": ["**/*.{tex,sty,bib}"],
+    "quarto-house-style": ["**/*.qmd", "**/_quarto.yml"],
+    "cgel-conventions": ["**/*.{tex,qmd}", "papers/**", "books/**"],
+}
+
+
+def frontmatter(rule_name: str) -> str:
+    paths = PATHS.get(rule_name)
+    if not paths:
+        return ""
+    lines = ["---", "paths:"] + [f'  - "{p}"' for p in paths] + ["---", ""]
+    return "\n".join(lines)
+
+
 HEADER = """<!--
 GENERATED FILE. DO NOT EDIT.
 
@@ -51,7 +72,7 @@ def extract_blocks(guide_text: str, rule_name: str) -> list[str]:
 
 def render(rule_name: str, blocks: list[str]) -> str:
     body = "\n\n".join(blocks)
-    return HEADER.replace("{name}", rule_name) + body + "\n"
+    return frontmatter(rule_name) + HEADER.replace("{name}", rule_name) + body + "\n"
 
 
 def main() -> int:
