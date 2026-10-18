@@ -163,10 +163,17 @@
 \@ifundefined{noautomath}{}{\noautomath}
 \makeatother
 
-% Judgement markers
-\newcommand{\ungram}[1]{*\!#1}
-\newcommand{\marg}[1]{?\!#1}
-\newcommand{\odd}[1]{\#\!#1}
+% Judgement markers, set small, raised and upright before the example, as in
+% CGEL (Huddleston & Pullum 2002: xii): * unacceptable, ? questionable,
+% # semantically or pragmatically anomalous, % some varieties only,
+% ! non-standard. The text asterisk is already small and raised in EB
+% Garamond, so it stays at text size; the other marks are superscripts.
+\newcommand{\judgmark}[1]{\textsuperscript{\normalfont#1}\kern-0.05em}
+\newcommand{\ungram}[1]{{\normalfont*}\kern-0.04em#1}
+\newcommand{\marg}[1]{\judgmark{?}#1}
+\newcommand{\odd}[1]{\judgmark{\#}#1}
+\newcommand{\dialect}[1]{\judgmark{\%}#1}
+\newcommand{\nonstd}[1]{\judgmark{!}#1}
 
 % ===========================
 % LISTS

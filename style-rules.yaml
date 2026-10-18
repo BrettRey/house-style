@@ -79,9 +79,12 @@ latex:
       subexamples: "\\ea \\ea ... \\ex ... \\z \\z"
       gloss: "\\gll ... \\\\ ... \\\\ \\glt ..."
     judgements:
-      ungrammatical: "\\ungram{*sentence}"
-      marginal: "\\marg{?sentence}"
-      odd: "\\odd{\\#sentence}"
+      note: "Each macro adds its own mark, set small, raised and upright as in CGEL (2002: xii); don't type the mark inside the argument"
+      ungrammatical: "\\ungram{sentence}"
+      marginal: "\\marg{sentence}"
+      odd: "\\odd{sentence}"
+      dialect: "\\dialect{sentence}"
+      nonstandard: "\\nonstd{sentence}"
 
 # Writing style
 prose:

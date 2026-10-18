@@ -1,6 +1,6 @@
 # House Style System
 
-**Version:** 2.3.0
+**Version:** 2.4.0
 
 This directory contains the house style framework for LaTeX academic papers by Brett Reynolds.
 
@@ -68,7 +68,7 @@ This creates a new paper directory with:
 
 ```
 .house-style/
-├── VERSION                      # 2.3.0
+├── VERSION                      # 2.4.0
 ├── preamble.tex                 # LaTeX setup
 ├── style-rules.yaml             # Machine-readable rules
 ├── style-guide.md               # Human-readable guide
@@ -158,6 +158,14 @@ New_Paper_Name/
 - **AI assistants**: Read `style-rules.yaml` (machine-readable)
 
 ## Version History
+
+### 2.4.0 (2026-10-18)
+- Judgement marks now set small, raised and upright before the example, as in CGEL
+  (Huddleston & Pullum 2002: xii). `\marg` and `\odd` use superscript `?` and `#`;
+  `\ungram` keeps the text asterisk, already small and raised in EB Garamond
+- New macros `\dialect` (%, some varieties only) and `\nonstd` (!, non-standard)
+- `style-guide.md` and `style-rules.yaml`: macro list corrected (the mark isn't typed
+  inside the argument) and the subexample no longer double-marks with `\ex[*]`
 
 ### 2.3.0 (2026-08-29)
 - Gratuitous precision added to `style-guide.md` as a writing-style rule: report a number

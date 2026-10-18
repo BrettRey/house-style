@@ -350,8 +350,8 @@ preserved; gloss and free-translation lines remain roman.
 ```latex
 \ea\label{ex:sub}
     \ea \mention{She has already left.}
-    \ex[*]{\ungram{\mention{She have already left.}}}
-    \ex[\#]{\odd{\mention{The square triangle laughed.}}}
+    \ex \ungram{\mention{She have already left.}}
+    \ex \odd{\mention{The square triangle laughed.}}
     \z
 \z
 ```
@@ -628,10 +628,13 @@ title = {Character identity mechanisms: {A} conceptual model...}
 % Cross-linguistic
 \crossmark            % Cross-linguistic subscript marker
 
-% Judgements
-\ungram{*sentence}    % Ungrammatical (*)
-\marg{?sentence}      % Marginal (?)
-\odd{#sentence}       % Odd (#)
+% Judgements (each macro adds its own mark, small, raised and upright,
+% as in CGEL 2002: xii; don't type the mark inside the argument)
+\ungram{sentence}     % Unacceptable (*)
+\marg{sentence}       % Questionable (?)
+\odd{sentence}        % Semantically or pragmatically anomalous (#)
+\dialect{sentence}    % Some varieties only (%)
+\nonstd{sentence}     % Non-standard (!)
 
 % Abbreviations
 \eg                   % e.g., with spacing
